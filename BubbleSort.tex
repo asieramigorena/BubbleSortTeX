@@ -1,0 +1,173 @@
+\documentclass[conference, a4paper]{IEEEtran}
+\IEEEoverridecommandlockouts
+% The preceding line is only needed to identify funding in the first footnote. If that is unneeded, please comment it out.
+%Template version as of 6/27/2024
+
+\usepackage{listings}
+\renewcommand{\lstlistingname}{Código}
+\usepackage{float}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
+% Añadido para plantilla JENUI (noviembre 2024)
+\usepackage[spanish]{babel}  
+\usepackage{balance} 
+\usepackage{tabularx}    
+\usepackage{hyperref}
+\def\IEEEkeywordsname{Palabras clave}   
+\renewcommand{\spanishtablename}{\textsc{Tabla}}
+
+% --- Añadido para que las referencias BibTeX salgan en español ---
+% \def\figurename{Figura}
+% \def\tablename{Tabla}
+% \def\refname{Referencias}
+\def\andname{y}
+\def\innames{en}
+% ---
+
+\usepackage[a4paper,  
+             inner = 1.5 cm, outer = 1.5 cm,
+             top = 2.5 cm, bottom = 3.2 cm]{geometry}
+% Fin añadido para plantilla JENUI.
+
+\makeatletter
+\AtBeginDocument{%
+  \immediate\write\@mainaux{}%
+}
+\makeatother
+
+
+\begin{document}
+
+\title{Ordenamiento de Burbuja}
+
+% Para artículos con hasta 3 autores, usar este formato:
+\author{
+\IEEEauthorblockN{Asier Amigorena Díez}
+\IEEEauthorblockA{\textit{79049057N}}
+\textit{24/11/2025}
+}
+
+\maketitle
+
+\begin{figure*}
+\begin{center}
+    \setlength{\fboxsep}{4pt} % Espacio entre la imagen y el borde
+    \setlength{\fboxrule}{0.5pt} % Grosor del borde
+	\fcolorbox{gray}{white}{\includegraphics[width = 0.9\linewidth]{OrdenamientoDeBurbuja.png}}
+\end{center}
+\caption{\label{BubSortImg} Explicación visual del funcionamiento del ordenamiento de burbuja}
+\end{figure*}
+
+\bibliographystyle{IEEEtran_Jenui}
+\bibliography{biblio}
+
+\section{\LaTeX}
+
+El sistema utilizado ha sido Overleaf, se trata de una herramienta basada en TeXLive. El compilador con el que se ha trabajado para elaborar este archivo de \LaTeX\ ha sido pdfLaTeX. En caso de tener ya instalados los paquetes nombrados en \ref{lst:compilar-pdflatex} que se incluyen en el paquete 'texlive-full' no sería necesario realizar la parte de la instalación de paquetes. Acto seguido se compila utilizando pdflatex para generar el archivo .aux, mediante bibtex se preparan las citas con el fichero .aux como destino, y por último se compila 2 veces más para que aparezcan correctamente todas las citas.
+\begin{lstlisting}[language=bash,breaklines=true,caption={Cómo compilar usando pdflatex},label={lst:compilar-pdflatex}]
+sudo apt install texlive texlive-latex-extra texlive-publishers texlive-lang-spanish
+pdflatex BubbleSort.tex
+bibtex BubbleSort
+pdflatex BubbleSort.tex
+pdflatex BubbleSort.tex
+\end{lstlisting}
+
+
+\section{Historia y justificación del diseño}
+
+Una de las primeras referencias que se hacen a este algoritmo de ordenamiento es la realizada por Edward Friend en 1956. Pero no se menciona el término 'ordenamiento de burbuja', sino 'ordenamiento por intercambio' (\textit{'sorting by exchange'}). No es hasta el año 1962 cuando, en un artículo (presentado en 1959 y revisado en 1961), Kenneth Eugene Iverson hace mención al término \textit{'Bubble Sort'}. A pesar de que previamente se presentaron artículos que incluían un algoritmo parecido al de burbuja, es la primera vez que se utiliza el término. {\cite{owen_bubblesort}}
+
+\section{Funcionamiento}
+
+\subsection{Explicación}
+Este método de ordenamiento consiste en comparar valores adyacentes e intercambiarlos en caso de que no estén en el orden correcto. Esto hace que los valores más pequeños se desplacen hacia el comienzo de la lista, mientras que los más grandes 'floten' hacia el final, lo que se asemeja al comportamiento de burbujas. {\cite{geeksforgeeks_bubble_sort}}\cite{WengrowJay2020ACGt}
+
+\subsection{Código}
+Este algoritmo no es conocido por su gran rendimiento, sino por su sencillez a la hora de implementarlo en un lenguaje de programación convencional
+\begin{lstlisting}[language=C, caption={Bubble Sort en C}, label={lst:bubblec}]
+void bubbleSort(int arr[], int n) {
+    for (int i = 0; i < n-1; i++) {
+        for (int j = 0; j < n-i-1; j++) {
+            if (arr[j] > arr[j+1]) {
+                int temp = arr[j];
+                arr[j] = arr[j+1];
+                arr[j+1] = temp;
+            }
+        }
+    }
+}
+\end{lstlisting}
+\section{Eficiencia}
+Este algoritmo tiene 2 fases, una de comparación y otra de intercambio. 
+En la fase inicial se compara si los valores deben ser cambiados; esto se realiza con todos los valores de la lista hasta que el más alto se encuentra al final. Una vez finalizada la primera iteración, se hace lo mismo omitiendo el último elemento que ya ha sido ordenado, lo que sería \(\sum\limits_{i=1}^{N-1}(N-i)\) siendo N el número de valores en la lista.   Durante la fase relativa a los cambios de posición, puede ser que no sea necesario que sean realizados. En el peor caso se tienen que realizar N cambios.
+Si por ejemplo tuviéramos 5 valores a comparar, se realizarían 10 comparaciones y en caso de tener que cambiar todas las posiciones tendríamos un cambio por operación, es decir 20 operaciones en total. Si incrementamos el número de posiciones de la lista a comparar, como se puede ver en la tabla~\ref{tab:tabcomplejidad} , el número de operaciones aumenta casi en \(N^2\) por lo que se diría que tiene una complejidad de \(O(N^2)\)\cite{WengrowJay2020ACGt} \ref{BubSortImg}
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|c|}\hline
+         Número de valores&  Número de operaciones & \(N^2\)\\\hline
+         5& 
+    20 & 25 \\\hline
+ 10& 90& 100\\\hline
+ 20& 380& 400\\ \hline\end{tabular}
+\caption{Operaciones de bubble sort}
+\label{tab:tabcomplejidad}
+    
+    
+\end{table}
+
+\section{Otros algoritmos conocidos}
+El algoritmo de ordenamiento de burbuja no es, ni mucho menos, el único utilizado ya que existen múltiples soluciones a la hora de reestructurar una lista. A continuación se muestra una lista con algunos de los más conocidos.
+
+\subsection{Lista de algunos algoritmos conocidos}
+
+\begin{itemize}
+    \item Ordenamiento por selección ('\textit{Selection Sort}')
+    \item Ordenamiento por inserción ('\textit{Insertion Sort}')
+    \item Ordenamiento rápido ('\textit{Quick Sort}')
+    \item Ordenamiento por mezcla ('\textit{Merge Sort}')
+    \item Ordenamiento por montículos ('\textit{Heap Sort}')
+\end{itemize}
+
+\section{Comparaciones con otros algoritmos}
+
+La manera óptima de comparar el rendimiento de un método de estas características es mediante la métrica de Halstead
+
+\subsection{Métrica de Halstead}
+
+La métrica se utiliza para medir la complejidad de un programa sin necesidad de ejecutarlo. Como paso inicial se desglosa el método en tokens, estos tokens serán los operadores (\(n_1\) el número de operadores distintos y \(N_1\) el número total de operadores) y operandos (\(n_2\) el número de operandos distintos y \(N_2\) el número total de operandos). Con estos datos se pueden representar distintos aspectos.\cite{geeksforgeeks_halstead_2025}\cite{schneider_halstead_2025}
+
+\begin{itemize}
+    \item Dificultad \(D = (n_1 / 2) * (N_2 / n_2)\)
+    \item Longitud \(L = N_1 + N_2\)
+    \item Longitud Calculada \(N_{x} = n_1 * log_2(n_1) + n_2 * log_2(n_2)\)
+    \item Volumen \(V = N log_2(n)\)
+    \item Esfuerzo \(E = V * D\)
+    \item Vocabulario \(n = n_1 + n_2\)
+\end{itemize}
+
+Para realizar la comparación, únicamente serán empleadas las métricas de esfuerzo (E) y dificultad (D).\ref{tab:TabHalstead}\cite{owen_bubblesort}
+\begin{table}[]
+    \centering
+    \begin{tabular}{|c|c|c|}\hline
+         Algoritmo&  Dificultad &Esfuerzo \\\hline
+         Burbuja& 
+     17,25&4165\\\hline
+ Selección& 15,95&4242\\\hline
+ Inserción& 23,20&6652\\\hline
+ Rápido& 7,88&3157\\ \hline\end{tabular}
+    \caption{Métrica de Halstead}
+    \label{tab:TabHalstead}
+\end{table}
+
+\section{Conclusiones}
+
+Tras repasar el funcionamiento del ordenamiento de burbuja, así como su rendimiento y comparación con otros algoritmos, podemos aceptar lo que dijo Donald Knuth, 'El ordenamiento por burbuja no parece tener nada para recomendarlo' ('\textit{bubble sort seems to have nothing to recommend it}') ya que pese a ser conocido por ser un método eficiente en cuanto a dificultad para ser programado, existen algoritmos más eficientes por ese aspecto.\cite{owen_bubblesort} Lo que lo hizo eficiente en líneas de código, ha supuesto que será ineficiente para el tratamiento de datos como se ha podido ver con su complejidad de \(O(N^2)\) \ref{tab:tabcomplejidad}
+
+\end{document}
